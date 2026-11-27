@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Misteri Leang-Leang</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700&family=Alegreya+Sans:wght@500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #d9d0bf;
+            --pn: rgba(241, 236, 225, .95);
+            --fg: #2b2118;
+            --ac: #a8281c;
+            --bd: #c2b7a4;
+            --gold: #b8761a
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --bg: #1b1510;
+                --pn: rgba(30, 24, 19, .95);
+                --fg: #efe6d6;
+                --ac: #e5604a;
+                --bd: #4a3d31;
+                --gold: #e8a33d
+            }
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #1b1510;
+            --pn: rgba(30, 24, 19, .95);
+            --fg: #efe6d6;
+            --ac: #e5604a;
+            --bd: #4a3d31;
+            --gold: #e8a33d
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: var(--bg);
+            color: var(--fg);
+            font-family: "Alegreya", Georgia, serif;
+            font-size: 18px
+        }
+
+        canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+            display: block
+        }
+
+        [hidden] {
+            display: none !important
+        }
+
+        .box {
+            background: var(--pn);
+            border: 1px solid var(--bd);
+            border-radius: 10px
+        }
+
+        #hud {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 0;
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            pointer-events: none
+        }
+
+        #hud>* {
+            padding: 6px 12px;
+            font-family: "Alegreya Sans", system-ui, sans-serif;
+            font-weight: 700;
+            font-size: 15px
+        }
+
+        #gems {
+            letter-spacing: 3px;
+            color: var(--gold);
+            font-size: 20px
+        }
+
+        #obj {
+            position: fixed;
+            left: 12px;
+            right: 12px;
+            bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+            padding: 8px 12px;
+            font-size: 16px;
+            max-width: 520px;
+            pointer-events: none
+        }
+
+        #act {
+            position: fixed;
+            right: 14px;
+            bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+            font-size: 20px;
+            padding: 12px 20px
+        }
+
+        #snd {
+            position: fixed;
+            left: 12px;
+            top: calc(58px + env(safe-area-inset-top, 0px));
+            font-size: 14px;
+            padding: 5px 10px
+        }
+
+        button {
+            font-family: "Alegreya Sans", system-ui, sans-serif;
+            font-weight: 700;
+            font-size: 17px;
+            color: var(--fg);
+            background: var(--pn);
+            border: 2px solid var(--ac);
+            border-radius: 8px;
+            padding: 10px 16px;
+            cursor: pointer
+        }
+
+        button:hover,
+        button:focus-visible {
+            background: var(--ac);
+            color: #fff;
+            outline: none
+        }
+
+        button.bad {
+            opacity: .45;
+            border-color: var(--bd);
+            text-decoration: line-through
+        }
+
+        #toast {
+            position: fixed;
+            left: 50%;
+            top: 30%;
+            transform: translateX(-50%);
+            padding: 10px 18px;
+            text-align: center;
+            transition: opacity .4s;
+            opacity: 0;
+            pointer-events: none;
+            max-width: 86vw
+        }
+
+        #dlg {
+            position: fixed;
+            left: 50%;
+            bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+            transform: translateX(-50%);
+            width: min(680px, calc(100vw - 20px));
+            max-height: 78vh;
+            overflow: auto;
+            padding: 16px 18px
+        }
+
+        #dlg h3 {
+            margin: 0 0 6px;
+            font-size: 22px;
+            color: var(--ac)
+        }
+
+        #dtx {
+            margin: 0 0 10px;
+            line-height: 1.45
+        }
+
+        #opts {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 8px
+        }
+
+        #opts button {
+            text-align: left
+        }
+
+        #fb {
+            min-height: 1.2em;
+            color: var(--ac);
+            margin: 0 0 6px
+        }
+
+        .scr {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(20, 14, 9, .78)
+        }
+
+        .scr .box {
+            max-width: 560px;
+            padding: 24px 26px;
+            max-height: 92vh;
+            overflow: auto
+        }
+
+        .scr h1 {
+            margin: 0 0 8px;
+            font-size: 38px;
+            line-height: 1.05;
+            color: var(--ac)
+        }
+
+        .scr p {
+            line-height: 1.45;
+            margin: 0 0 12px
+        }
+
+        .scr ul {
+            margin: 0 0 14px;
+            padding-left: 20px;
+            line-height: 1.4
+        }
+    </style>
+</head>
+
+<body>
+    <div id="hud">
+        <div id="zone" class="box"></div>
+        <div id="gems" class="box"></div>
+    </div>
+    <button id="snd" class="box">Narator suara: mati</button>
+    <div id="obj" class="box"></div>
+    <button id="act" hidden>Interaksi (E)</button>
+    <div id="toast" class="box"></div>
+    <div id="dlg" class="box" hidden>
+        <h3 id="dt"></h3>
+        <p id="dtx"></p>
+        <div id="opts"></div>
+        <p id="fb"></p><button id="nxt"></button>
+    </div>
+    <div id="start" class="scr">
+        <div class="box">
+            <h1>Misteri Leang-Leang</h1>
+            <p>Kamu seorang arkeolog muda di Taman Prasejarah Leang-Leang, Maros. Sebuah catatan tua menyebut pesan
+                leluhur yang terkunci oleh empat kepingan pengetahuan. Jelajahi gerbang, jalur karst, dan gua-gua purba
+                untuk menemukannya.</p>
+            <ul>
+                <li>Gerak: W A S D atau tombol panah. Di layar sentuh, geser di sisi kiri.</li>
+                <li>Arah pandang: seret mouse atau geser di sisi kanan layar.</li>
+                <li>Ikuti titik emas, lalu tekan E atau tombol Interaksi.</li>
+            </ul>
+            <button id="go">Mulai petualangan</button>
+        </div>
+    </div>
+    <div id="end" class="scr" hidden>
+        <div class="box">
+            <h1>Misteri terpecahkan</h1>
+            <p>Keempat kepingan menyatu dan pesan leluhur terbaca: “Kami meninggalkan jejak agar kalian ingat dari mana
+                manusia berasal. Jagalah ia.”</p>
+            <ul>
+                <li>Leang-Leang ada di Maros, bagian dari karst Maros-Pangkep.</li>
+                <li>Karst terbentuk dari batu gamping yang larut oleh air.</li>
+                <li>Cap tangan dibuat dengan menyemburkan pigmen di sekitar telapak tangan.</li>
+                <li>Alat batu menunjukkan manusia purba pernah hidup di sini.</li>
+            </ul>
+            <button onclick="location.reload()">Main lagi</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        const $ = id => document.getElementById(id), R = THREE, rnd = Math.random, cl = (v, a, b) => Math.max(a, Math.min(b, v)), lp = (a, b, k) => a + (b - a) * k;
+        const scene = new R.Scene(), cam = new R.PerspectiveCamera(70, innerWidth / innerHeight, .1, 300);
+        const ren = new R.WebGLRenderer({ antialias: true }); ren.setPixelRatio(Math.min(devicePixelRatio, 2)); ren.setSize(innerWidth, innerHeight); document.body.prepend(ren.domElement);
+        const skyC = new R.Color(0x9ad1e6), caveC = new R.Color(0x0b0806); scene.background = skyC.clone(); scene.fog = new R.Fog(0x9ad1e6, 25, 130);
+        const hemi = new R.HemisphereLight(0xdff2ff, 0x5a4a35, .9), sun = new R.DirectionalLight(0xfff0d0, .9); sun.position.set(30, 60, 20);
+        const spot = new R.SpotLight(0xfff2cc, .3, 45, .55, .5); spot.position.set(0, 0, 0); spot.target.position.set(0, 0, -1); cam.add(spot, spot.target);
+        scene.add(hemi, sun, cam);
+
+        function tex(w, h, fn, rep) { const c = document.createElement('canvas'); c.width = w; c.height = h; fn(c.getContext('2d'), w, h); const t = new R.CanvasTexture(c); if (rep) { t.wrapS = t.wrapT = R.RepeatWrapping; t.repeat.set(rep[0], rep[1]) } return t }
+        const noise = (base, n, fn) => (g, w, h) => { g.fillStyle = base; g.fillRect(0, 0, w, h); for (let i = 0; i < n; i++) { g.fillStyle = fn(); g.fillRect(rnd() * w, rnd() * h, 2 + rnd() * 7, 2 + rnd() * 4) } };
+        const rockT = tex(256, 256, noise('#8a7d6b', 2500, () => { const v = 90 + rnd() * 80 | 0; return `rgba(${v},${v - 10},${v - 25},.5)` }), [3, 2]);
+        const grassT = tex(256, 256, noise('#4d7a3a', 3000, () => `rgba(${50 + rnd() * 40 | 0},${90 + rnd() * 50 | 0},40,.5)`), [40, 40]);
+        const floorT = tex(256, 256, noise('#5b4e40', 2500, () => { const v = 60 + rnd() * 50 | 0; return `rgba(${v},${v - 8},${v - 18},.5)` }), [8, 40]);
+        function paint(babi) {
+            return tex(512, 256, (g, w, h) => {
+                noise('#6b5a47', 1500, () => `rgba(${60 + rnd() * 60 | 0},${50 + rnd() * 40 | 0},35,.35)`)(g, w, h); g.fillStyle = g.strokeStyle = '#a8281c';
+                const hand = (x, y, s, f) => { g.save(); g.translate(x, y); g.scale(s * f, s); g.beginPath(); g.ellipse(0, 0, 22, 26, 0, 0, 7); g.fill();[[-16, -18, -.35, 34], [-6, -22, -.1, 40], [5, -22, .05, 42], [15, -19, .2, 36], [22, -2, 1.1, 26]].forEach(([a, b, r, l]) => { g.save(); g.translate(a, b); g.rotate(r); g.fillRect(-5, -l, 10, l); g.restore() }); g.restore() };
+                if (babi) { g.beginPath(); g.ellipse(250, 150, 72, 32, 0, 0, 7); g.fill(); g.beginPath(); g.ellipse(325, 140, 28, 20, 0, 0, 7); g.fill();[190, 225, 275, 305].forEach(x => g.fillRect(x, 170, 10, 44)); g.lineWidth = 6; g.beginPath(); g.arc(340, 128, 20, Math.PI, Math.PI * 1.75); g.stroke(); g.beginPath(); g.moveTo(180, 140); g.quadraticCurveTo(150, 150, 160, 185); g.stroke(); hand(70, 90, .8, 1); hand(440, 70, .9, -1); hand(450, 190, .7, 1) }
+                else[[90, 90, 1, 1], [200, 70, .8, -1], [320, 110, 1.1, 1], [430, 80, .9, -1], [150, 190, .9, -1], [380, 200, .8, 1]].forEach(a => hand(...a))
+            })
+        }
+        const M = (o) => new R.MeshStandardMaterial(o), add = m => (scene.add(m), m);
+        const rockM = M({ map: rockT, color: 0xcfc4b0, roughness: 1 }), karstM = M({ map: rockT, color: 0xb9b2a0, flatShading: true, roughness: 1 });
+
+        // Tanah, jalur, gua
+        const gnd = add(new R.Mesh(new R.PlaneGeometry(240, 260), M({ map: grassT }))); gnd.rotation.x = -Math.PI / 2; gnd.position.z = -80;
+        const path = add(new R.Mesh(new R.PlaneGeometry(5, 76), M({ color: 0x9b7b52, roughness: 1 }))); path.rotation.x = -Math.PI / 2; path.position.set(0, .02, -20);
+        const cfl = add(new R.Mesh(new R.PlaneGeometry(14, 104), M({ map: floorT }))); cfl.rotation.x = -Math.PI / 2; cfl.position.set(0, .03, -109);
+        const box = (w, h, d, x, y, z) => { const m = add(new R.Mesh(new R.BoxGeometry(w, h, d), rockM)); m.position.set(x, y, z); return m };
+        box(1, 10, 104, -7.5, 5, -109); box(1, 10, 104, 7.5, 5, -109); box(16, 1, 104, 0, 9.5, -109); box(16, 10, 1, 0, 5, -161.5); box(16, 5, 3, 0, 11.5, -57.5);
+        const mound = add(new R.Mesh(new R.ConeGeometry(50, 45, 10), karstM)); mound.position.set(0, 22, -107);
+
+        // Bukit karst dan pohon
+        for (let i = 0; i < 46; i++) { const s = 1 + rnd() * 1.2, h = (16 + rnd() * 18) * s, m = add(new R.Mesh(new R.ConeGeometry(7 * s, h, 7), karstM)); m.position.set((i % 2 ? 1 : -1) * (28 + rnd() * 34), h / 2 - 1, 18 - rnd() * 72) }
+        for (let i = 0; i < 40; i++) { const x = (i % 2 ? 1 : -1) * (5 + rnd() * 18), z = 20 - rnd() * 74, t = add(new R.Mesh(new R.CylinderGeometry(.15, .25, 2.5, 6), M({ color: 0x6b4a2b }))); t.position.set(x, 1.25, z); const c = add(new R.Mesh(new R.ConeGeometry(1.4, 3.2, 7), M({ color: 0x2f6b3f, flatShading: true }))); c.position.set(x, 3.7, z) }
+
+        // Gerbang
+        const signT = tex(512, 128, (g, w, h) => { g.fillStyle = '#5a3a20'; g.fillRect(0, 0, w, h); g.fillStyle = '#f0dcb4'; g.textAlign = 'center'; g.font = 'bold 54px Georgia,serif'; g.fillText('LEANG-LEANG', w / 2, 64); g.font = '26px Georgia,serif'; g.fillText('Taman Prasejarah, Maros', w / 2, 102) });
+        [-4, 4].forEach(x => { const p = add(new R.Mesh(new R.BoxGeometry(.9, 5.6, .9), M({ color: 0x6b4a2b }))); p.position.set(x, 2.8, 8) });
+        const lin = add(new R.Mesh(new R.BoxGeometry(9.8, .8, .9), M({ color: 0x6b4a2b }))); lin.position.set(0, 5.4, 8);
+        const sign = add(new R.Mesh(new R.PlaneGeometry(6.4, 1.6), new R.MeshBasicMaterial({ map: signT }))); sign.position.set(0, 4.2, 8.5);
+
+        // Lukisan dinding
+        const pw = (babi, x, z, r) => { const m = add(new R.Mesh(new R.PlaneGeometry(8, 4), M({ map: paint(babi), roughness: 1 }))); m.position.set(x, 3, z); m.rotation.y = r };
+        pw(true, -6.95, -72, Math.PI / 2); pw(false, 6.95, -106, -Math.PI / 2);
+        // Stalaktit, stalagmit, kristal
+        for (let i = 0; i < 110; i++) { const h = 1.2 + rnd() * 3, up = i % 3 == 0, m = add(new R.Mesh(new R.ConeGeometry(.3 + rnd() * .5, h, 6), rockM)); m.rotation.x = up ? 0 : Math.PI; m.position.set((rnd() * 2 - 1) * 6.5, up ? h / 2 : 9 - h / 2, -60 - rnd() * 100) }
+        const crys = []; for (let i = 0; i < 26; i++) { const h = 1 + rnd() * 2.5, m = add(new R.Mesh(new R.ConeGeometry(.35, h, 5), M({ color: 0x66e0ff, emissive: 0x2ac8ee, emissiveIntensity: .9, flatShading: true }))); m.position.set((i % 2 ? 1 : -1) * (2.5 + rnd() * 3.5), h / 2, -130 - rnd() * 28); m.rotation.z = (rnd() - .5) * .5 }
+        const altar = add(new R.Mesh(new R.CylinderGeometry(1.4, 1.8, 1.2, 8), rockM)); altar.position.set(0, .6, -152);
+        // Cahaya obor
+        const torches = [[-4, -72, 0xffa24a], [4, -108, 0xffa24a], [0, -148, 0xffa24a], [0, -140, 0x55ddff]].map(([x, z, c]) => { const l = new R.PointLight(c, 1.2, 24); l.position.set(x, 3, z); scene.add(l); return l });
+
+        // Stasiun, hambatan, fragmen
+        const LIM = [-12, -56, -88, -122, -160];
+        const ST = [
+            { p: [0, -2], t: 'Papan informasi di gerbang', n: 'Selamat datang di Taman Prasejarah Leang-Leang, Kabupaten Maros, Sulawesi Selatan. Di sinilah dinding karst menyimpan lukisan gua yang dibuat puluhan ribu tahun lalu. Segel cahaya di depanmu hanya terbuka bagi yang mau belajar. Jawab pertanyaan penjaga untuk membukanya.', q: 'Di kabupaten manakah Taman Prasejarah Leang-Leang berada?', o: ['Maros', 'Gowa', 'Bone'], a: 0, f: 'Kata leang berarti gua dalam bahasa setempat. Segel pertama terbuka.' },
+            { p: [0, -36], t: 'Jalur karst', n: 'Tebing menjulang ini bagian dari kawasan karst Maros-Pangkep, salah satu karst terbesar di dunia. Karst terbentuk ketika air hujan yang sedikit asam melarutkan batuan kapur selama ribuan tahun, membentuk bukit, lorong, dan gua.', q: 'Karst terbentuk terutama dari pelarutan batuan apa?', o: ['Batu gamping (kapur)', 'Granit', 'Basal'], a: 0, f: 'Karena itu gua di sini dihiasi stalaktit dan stalagmit. Kamu mendapat Kepingan Karst.' },
+            { p: [-3, -72], t: 'Leang Pettae: dinding lukisan', n: 'Cahaya senter menyorot dinding: telapak tangan merah dan seekor babi rusa (babirusa). Cap tangan dibuat dengan menempelkan tangan ke dinding lalu menyemburkan pigmen merah di sekitarnya. Penelitian tahun 2014 di beberapa gua kawasan Maros-Pangkep menaksir cap tangan tertuanya berusia hampir 40.000 tahun.', q: 'Bagaimana cap tangan di dinding gua dibuat?', o: ['Menempelkan tangan lalu menyemburkan pigmen di sekelilingnya', 'Memahat bentuk tangan pada batu', 'Mencetak dengan cap kayu'], a: 0, f: 'Teknik ini disebut stensil tangan. Kamu mendapat Kepingan Lukisan.' },
+            { p: [0, -108], t: 'Leang Pettakere: fragmen dan alat batu', n: 'Fragmen yang kamu kumpulkan menyatu menjadi pola lukisan lama. Di situs gua prasejarah, peneliti juga menemukan serpihan alat batu dan sisa makanan, bukti bahwa manusia purba pernah tinggal dan berburu di sekitar sini.', q: 'Selain lukisan, peninggalan apa yang lazim ditemukan di situs gua prasejarah?', o: ['Alat batu', 'Mesin uap', 'Koin logam'], a: 0, f: 'Alat serpih batu dipakai untuk memotong daging dan mengolah makanan. Kamu mendapat Kepingan Alat Batu.' },
+            { p: [0, -148], t: 'Altar di gua terdalam', n: 'Ruang rahasia ini hanya ada dalam cerita game ini. Kristal bersinar di sekeliling altar. Tiga kepingan di tanganmu bergetar. Satu pertanyaan terakhir sebelum pesan leluhur terbuka.', q: 'Apa sikap yang tepat saat berkunjung ke situs prasejarah?', o: ['Tidak menyentuh lukisan dan menjaga kebersihan', 'Menulis nama di dinding sebagai kenang-kenangan', 'Membawa pulang batu sebagai suvenir'], a: 0, f: 'Lukisan setua ini rapuh, minyak dari tangan bisa merusaknya. Kamu mendapat Kepingan Pesan.' }];
+        const OB = ['Baca papan informasi di dekat gerbang. Ikuti titik emas, lalu tekan E.', 'Susuri jalur karst menuju titik emas berikutnya.', 'Masuki Leang Pettae dan amati dinding lukisan.', 'Kumpulkan 3 bola cahaya (fragmen lukisan) di Leang Pettakere.', 'Capai altar di gua terdalam.'];
+        const gold = M({ color: 0xffc24a, emissive: 0xe8a33d, emissiveIntensity: 1.1 });
+        ST.forEach(s => { s.m = add(new R.Mesh(new R.IcosahedronGeometry(.45), gold)); s.m.position.set(s.p[0], 1.8, s.p[1]) });
+        const bars = LIM.slice(0, 4).map((z, i) => { const m = add(new R.Mesh(new R.PlaneGeometry(i < 2 ? 40 : 14, 10), new R.MeshBasicMaterial({ color: 0xffb347, transparent: true, opacity: .22, side: R.DoubleSide, depthWrite: false }))); m.position.set(0, 5, z); return m });
+        const orbs = [[-4, -96], [4, -103], [-3, -115]].map(([x, z]) => { const m = add(new R.Mesh(new R.SphereGeometry(.35, 12, 12), gold)); m.position.set(x, 1.3, z); return m });
+
+        // Status permainan
+        let stage = 0, gems = 0, got = 0, playing = false, dlgOpen = false, yaw = 0, pitch = 0, zoneName = '', voice = false;
+        const P = cam.position; P.set(0, 1.7, 14); cam.rotation.order = 'YXZ';
+        function say(t) { if (!voice || !window.speechSynthesis) return; speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = 'id-ID'; u.rate = .95; speechSynthesis.speak(u) }
+        let tt; function toast(t) { const e = $('toast'); e.textContent = t; e.style.opacity = 1; clearTimeout(tt); tt = setTimeout(() => e.style.opacity = 0, 3200) }
+        function hud() { $('gems').textContent = '◆'.repeat(gems) + '◇'.repeat(4 - gems); $('obj').textContent = stage > 3 && stage < 5 ? OB[stage] : stage === 3 ? (got < 3 ? `Kumpulkan 3 bola cahaya (fragmen lukisan): ${got}/3` : 'Fragmen lengkap. Temui titik emas.') : OB[Math.min(stage, 4)] }
+        function near(s) { return Math.hypot(P.x - s.p[0], P.z - s.p[1]) < 4.5 }
+        function interact() {
+            if (!playing || dlgOpen || stage > 4) return; const s = ST[stage]; if (!near(s)) return; if (stage === 3 && got < 3) { toast(`Kumpulkan 3 fragmen dulu (${got}/3)`); return }
+            dlgOpen = true; $('dlg').hidden = false; $('act').hidden = true; $('dt').textContent = s.t; $('dtx').textContent = s.n; $('opts').innerHTML = ''; $('fb').textContent = ''; $('nxt').hidden = false; $('nxt').textContent = 'Lanjut ke pertanyaan'; $('nxt').onclick = () => quiz(s); say(s.n)
+        }
+        function quiz(s) { $('nxt').hidden = true; $('dtx').textContent = s.q; const o = $('opts'); o.innerHTML = ''; s.o.forEach((x, k) => { const b = document.createElement('button'); b.textContent = x; b.onclick = () => { if (k === s.a) win(s); else { b.classList.add('bad'); b.disabled = true; $('fb').textContent = 'Belum tepat. Coba pilihan lain.' } }; o.appendChild(b) }); say(s.q) }
+        function win(s) { $('opts').innerHTML = ''; $('fb').textContent = ''; $('dtx').textContent = 'Benar! ' + s.f; say('Benar! ' + s.f); const n = $('nxt'); n.hidden = false; n.textContent = stage === 4 ? 'Baca pesan leluhur' : 'Lanjutkan'; n.onclick = () => { $('dlg').hidden = true; dlgOpen = false; if (stage > 0) gems = stage; stage++; hud(); if (stage > 4) { playing = false; $('end').hidden = false; say('Keempat kepingan menyatu. Misteri Leang-Leang terpecahkan.') } else toast(stage > 1 ? 'Kepingan didapat!' : 'Segel terbuka!') } }
+        // Input
+        const keys = {}, joy = { x: 0, y: 0 }, ptr = {};
+        addEventListener('keydown', e => { keys[e.code] = 1; if (e.code === 'KeyE') interact() }); addEventListener('keyup', e => keys[e.code] = 0);
+        ren.domElement.addEventListener('pointerdown', e => { ptr[e.pointerId] = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, mv: e.pointerType === 'touch' && e.clientX < innerWidth * .4 } });
+        addEventListener('pointermove', e => { const p = ptr[e.pointerId]; if (!p || !playing || dlgOpen) return; if (p.mv) { joy.x = cl((e.clientX - p.sx) / 50, -1, 1); joy.y = cl((e.clientY - p.sy) / 50, -1, 1) } else { yaw -= (e.clientX - p.x) * .005; pitch = cl(pitch - (e.clientY - p.y) * .005, -1.2, 1.2); p.x = e.clientX; p.y = e.clientY } });
+        const up = e => { const p = ptr[e.pointerId]; if (p && p.mv) joy.x = joy.y = 0; delete ptr[e.pointerId] }; addEventListener('pointerup', up); addEventListener('pointercancel', up);
+        $('act').onclick = interact; $('go').onclick = () => { $('start').hidden = true; playing = true; hud(); toast('Ikuti titik emas di depanmu'); say('Kamu berdiri di depan gerbang Taman Prasejarah Leang-Leang. Ikuti titik emas.') };
+        $('snd').onclick = () => { voice = !voice; $('snd').textContent = 'Narator suara: ' + (voice ? 'hidup' : 'mati'); if (!voice && window.speechSynthesis) speechSynthesis.cancel() };
+        addEventListener('resize', () => { cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix(); ren.setSize(innerWidth, innerHeight) });
+
+        // Loop
+        const clock = new R.Clock(); let T = 0;
+        function zoneOf(z) { return z > -8 ? 'Gerbang Leang-Leang' : z > -57 ? 'Jalur Karst' : z > -88 ? 'Leang Pettae' : z > -122 ? 'Leang Pettakere' : 'Gua Terdalam' }
+        function loop() {
+            requestAnimationFrame(loop); const dt = Math.min(clock.getDelta(), .05); T += dt;
+            if (playing && !dlgOpen) {
+                const f = (keys.KeyW || keys.ArrowUp ? 1 : 0) - (keys.KeyS || keys.ArrowDown ? 1 : 0) - joy.y, s = (keys.KeyD || keys.ArrowRight ? 1 : 0) - (keys.KeyA || keys.ArrowLeft ? 1 : 0) + joy.x;
+                let dx = -Math.sin(yaw) * f + Math.cos(yaw) * s, dz = -Math.cos(yaw) * f - Math.sin(yaw) * s; const l = Math.hypot(dx, dz); if (l > 1) { dx /= l; dz /= l }
+                P.x = cl(P.x + dx * 6 * dt, P.z < -57 ? -6.3 : -13, P.z < -57 ? 6.3 : 13); P.z = cl(P.z + dz * 6 * dt, LIM[Math.min(stage, 4)] + .6, 16); P.y = 1.7 + (l > .1 ? Math.sin(T * 9) * .04 : 0);
+                const zn = zoneOf(P.z); if (zn !== zoneName) { zoneName = zn; $('zone').textContent = zn; if (playing) toast(zn) }
+                orbs.forEach(o => { if (!o.userData.c && stage === 3 && Math.hypot(P.x - o.position.x, P.z - o.position.z) < 1.8) { o.userData.c = 1; got++; hud(); toast(`Fragmen ${got}/3`) } });
+                $('act').hidden = !(stage < 5 && near(ST[stage]))
+            }
+            cam.rotation.set(pitch, yaw, 0);
+            const k = cl((-P.z - 52) / 8, 0, 1); scene.background.lerpColors(skyC, caveC, k); scene.fog.color.copy(scene.background); scene.fog.near = lp(25, 3, k); scene.fog.far = lp(130, 48, k); hemi.intensity = lp(.9, .15, k); sun.intensity = lp(.9, 0, k); spot.intensity = lp(.3, 1.8, k);
+            torches.forEach((t, i) => t.intensity = (i < 3 ? 1.2 : 1.5) + .2 * Math.sin(T * (i < 3 ? 13 : 3) + i));
+            ST.forEach((s, i) => { s.m.visible = playing && i === stage; s.m.position.y = 1.8 + Math.sin(T * 2 + i) * .2; s.m.rotation.y = T });
+            bars.forEach((b, i) => b.visible = stage <= i); orbs.forEach(o => { o.visible = stage === 3 && !o.userData.c; o.position.y = 1.3 + Math.sin(T * 3) * .15 });
+            ren.render(scene, cam)
+        }
+        hud(); loop();
+    </script>
+</body>
+
+</html>
