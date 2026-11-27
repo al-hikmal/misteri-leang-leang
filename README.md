@@ -141,9 +141,10 @@ Fakta pada narasi dan kuis (lokasi, proses terbentuknya karst, teknik cap tangan
 **Nama tim: Leang Studio**
 
 | Nama | NIM | Peran |
-| AL Hikmal | 47226023 | Ketua & Pemrogram |
-| Nur Auliya Zalzabila | 47226010 | Pencetus Ide 1: Cerita & Konten Edukasi |
-| Aisyah Mutiara Arsyad Rahman | 47226007 | Pencetus Ide 2: Desain Visual & Gameplayi |
+|---|---|---|
+| AL Hikmal | 47226023 | Ketua dan Pemrogram |
+| Nur Auliya Zalzabila | 47226010 | Pencetus Ide 1: Cerita dan Konten Edukasi |
+| Aisyah Mutiara Arsyad Rahman | 47226007 | Pencetus Ide 2: Desain Visual dan Gameplay |
 | Yulia Rasty Junidar | 47226025 | Pembuat Laporan |
 
 **Mata kuliah:** Grafika Komputer
