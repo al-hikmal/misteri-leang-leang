@@ -283,6 +283,10 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+    <script>
         const $ = id => document.getElementById(id), R = THREE, rnd = Math.random, cl = (v, a, b) => Math.max(a, Math.min(b, v)), lp = (a, b, k) => a + (b - a) * k;
         const scene = new R.Scene(), cam = new R.PerspectiveCamera(70, innerWidth / innerHeight, .1, 300);
         const ren = new R.WebGLRenderer({ antialias: true }); ren.setPixelRatio(Math.min(devicePixelRatio, 2)); ren.setSize(innerWidth, innerHeight); document.body.prepend(ren.domElement);
