@@ -160,3 +160,10 @@ Three.js dimuat dari CDN dan memiliki lisensi MIT miliknya sendiri.
 
 - Dokumentasi Three.js: https://threejs.org/docs/
 - Taman Prasejarah Leang-Leang, Kabupaten Maros (sumber resmi dari instansi terkait)
+
+## Kontak
+
+Saran, masukan, maupun laporan *bug* untuk pengembangan game **Misteri Leang-Leang** sangat kami harapkan. Silakan hubungi tim pengembang melalui:
+
+- **Email:** [leangstudio@gmail.com](mailto:leangstudio@gmail.com)
+- **Repositori GitHub:** [github.com/al-hikmal/misteri-leang-leang](https://github.com/al-hikmal/misteri-leang-leang)
